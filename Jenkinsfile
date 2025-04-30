@@ -48,7 +48,7 @@ pipeline{
                 script{
                    withDockerRegistry(credentialsId: 'docker', toolName: 'docker'){   
                        sh "docker build -t starbucks ."
-                       sh "docker tag starbucks aseemakram19/starbucks:latest "
+                       sh "docker tag starbucks chan/starbucks:latest "
                        sh "docker push aseemakram19/starbucks:latest "
                     }
                 }
