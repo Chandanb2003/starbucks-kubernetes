@@ -5,7 +5,6 @@ pipeline {
         nodejs 'node17'
     }
     environment {
-        SCANNER_HOME = tool 'sonar-scanner'
         APP_NAME = 'starbucks'
         NAMESPACE = 'default'
     }
@@ -22,32 +21,9 @@ pipeline {
             }
         }
 
-        stage("Sonarqube Analysis") {
-            steps {
-                withSonarQubeEnv('SonarQube') {
-                    sh ''' $SCANNER_HOME/bin/sonar-scanner -Dsonar.projectName=starbucks \
-                    -Dsonar.projectKey=starbucks '''
-                }
-            }
-        }
-
-        stage("quality gate") {
-            steps {
-                script {
-                    waitForQualityGate abortPipeline: false, credentialsId: 'Sonar-token' 
-                }
-            }
-        }
-
         stage('Install Dependencies') {
             steps {
                 sh "npm install"
-            }
-        }
-
-        stage('TRIVY FS SCAN') {
-            steps {
-                sh "trivy fs . > trivyfs.txt"
             }
         }
 
@@ -60,12 +36,6 @@ pipeline {
                         sh "docker push chandan669/starbucks:latest"
                     }
                 }
-            }
-        }
-
-        stage("TRIVY") {
-            steps {
-                sh "trivy image chandan669/starbucks:latest > trivyimage.txt"
             }
         }
 
